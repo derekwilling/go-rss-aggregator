@@ -1,0 +1,33 @@
+version: '3.4'
+
+services:
+  gorssaggregator:
+    image: gorssaggregator
+    privileged: true
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    depends_on:
+      - db
+    ports:
+      - 8000:8000
+      - 40000:40000
+    environment:
+      PORT: 8000
+      DB_URL: postgres://postgres:postgres@db:5432/rssagg?sslmode=disable
+      DB_NAME: rssagg
+  db:
+    image: postgres
+    restart: always
+    environment: 
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
+    driver: local
+
